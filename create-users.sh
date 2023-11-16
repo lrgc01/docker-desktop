@@ -2,7 +2,7 @@
 
 Usage() {
         echo "Usage: $0"
-        echo "	-n container_name (mandatory"
+	echo "	-n container_name (mandatory)"
 	echo "	-u user_list (comma separated)"
 	echo "	-g group_list (comma separated)"
         echo "	-d (dryrun)"
@@ -38,12 +38,10 @@ do
    esac
 done
 
-USERS=${_USERS:-"luiz"}
-_id_luiz="130370"
-_id_ze="20405"
-_id_jaoschmidt="111098"
-_id_vera="161269"
-   
+USERS=${_USERS:-""}
+# Can use uid fixed in a variable
+# _id_$user
+
 if [ -z "$_GROUPLIST" ];then
    _GROUPLIST="sudo,video,xrdp"
 fi
