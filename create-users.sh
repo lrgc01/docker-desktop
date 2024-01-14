@@ -3,11 +3,14 @@
 Usage() {
         echo "Usage: $0"
 	echo "	-n container_name (mandatory)"
-	echo "	-u user_list (comma separated)"
-	echo "	-g group_list (comma separated)"
+	echo "	-u u1,u2,u3,... (comma separated list)"
+	echo "	-g g1,g2,g3,... (comma separated list)"
+	echo "	-s <shell_path> (user shell for all in list)"
         echo "	-d (dryrun)"
         echo "	-h (this help)"
 }
+
+_SHELL=/bin/bash
 
 while [ $# -gt 0 ]
 do
@@ -22,6 +25,10 @@ do
       ;;
       --[gG][rR][oO][uU][pP]|-[gG])
           _GROUPLIST="$2"
+          shift 2
+      ;;
+      --[sS][hH][eE][lL][lL]|-[sS])
+          _SHELL="$2"
           shift 2
       ;;
       --[dD][rR][yY]-[rR][uU][nN]|-[dD])
@@ -42,6 +49,7 @@ USERS=${_USERS:-""}
 # Can use uid fixed in a variable
 # _id_$user
 
+   
 if [ -z "$_GROUPLIST" ];then
    _GROUPLIST="sudo,video,xrdp"
 fi
@@ -62,6 +70,6 @@ else
       else
          ID=""
       fi
-      $DRYRUN $SUDO docker exec -i $_CONTNAME useradd $ID -G $_GROUPLIST -s /bin/bash -d /home/$u -m $u
+      $DRYRUN $SUDO docker exec -i $_CONTNAME useradd $ID -G $_GROUPLIST -s $_SHELL -d /home/$u -m $u
    done
 fi

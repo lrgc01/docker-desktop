@@ -7,6 +7,7 @@ Usage() {
         echo "   -n containerName"
         echo "   --priv (run in privileged mode)"
         echo "   --shm (use ipc=host)"
+        echo "   --seccomp (use --security-opt seccomp=unconfined)"
         echo "   -d (dryrun) -h (this help)"
 }
 
@@ -31,6 +32,10 @@ do
       ;;
       --[sS][hH][mM]) 
           SHM="--ipc=host"
+          shift 1
+      ;;
+      --[sS][eE][cC][cC][oO][mM][pP]) 
+          _SECCOMP="--security-opt=seccomp=unconfined"
           shift 1
       ;;
       --[dD][rR][yY]-[rR][uU][nN]|-[dD]) 
@@ -59,7 +64,12 @@ fi
 for _dev in /dev/fuse /dev/video$NUM_1 /dev/dri/card0 /dev/dri/renderD128
 do
    if [ -c $_dev ]; then
-      DEV="$DEV --device=$_dev:$_dev"
+	   _DOCKDEV="$_dev"
+	   case $_dev in
+		   /dev/video*) _DOCKDEV=/dev/video0
+			   ;;
+	   esac
+      DEV="$DEV --device=$_dev:$_DOCKDEV"
    fi
 done
 $DRYRUN $SUDO docker run -d \
@@ -69,6 +79,7 @@ $DRYRUN $SUDO docker run -d \
 	-p 2222$NUM:22 \
 	--cap-add=SYS_ADMIN \
 	--security-opt=apparmor:unconfined \
+	$_SECCOMP \
         $DEV \
         $SHM \
         $PRIVILEGED \
@@ -77,3 +88,4 @@ $DRYRUN $SUDO docker run -d \
 	--name=$NAME \
 	--hostname=$NAME \
 	$IMGNAME 
+
