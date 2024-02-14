@@ -6,6 +6,7 @@ Usage() {
 	echo "	-u u1,u2,u3,... (comma separated list)"
 	echo "	-g g1,g2,g3,... (comma separated list)"
 	echo "	-s <shell_path> (user shell for all in list)"
+        echo "  -e <environment file name>"
         echo "	-d (dryrun)"
         echo "	-h (this help)"
 }
@@ -29,6 +30,13 @@ do
       ;;
       --[sS][hH][eE][lL][lL]|-[sS])
           _SHELL="$2"
+          shift 2
+      ;;
+      --[eE][nN][vV][iI][rR]*|-[eE])
+          _ENVFILE="$2"
+          if [ -f "$_ENVFILE" ]; then
+             . "$_ENVFILE"
+          fi
           shift 2
       ;;
       --[dD][rR][yY]-[rR][uU][nN]|-[dD])
