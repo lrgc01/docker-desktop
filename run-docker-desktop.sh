@@ -8,6 +8,7 @@ Usage() {
         echo "   --priv (run in privileged mode)"
         echo "   --shm (use ipc=host)"
         echo "   --seccomp (use --security-opt seccomp=unconfined)"
+	echo "   --tmp (use tmpfs standard mounts inside container)"
         echo "   -d (dryrun) -h (this help)"
 }
 
@@ -43,6 +44,11 @@ do
           _MINUSD="-d"
           shift 1
       ;;
+      --[tT][mM][pP][fF][sS]) 
+          #_TMPFS="--tmpfs /run --tmpfs /run/lock --tmpfs /tmp --tmpfs /run/s6:rw,exec"
+          _TMPFS="--tmpfs /run/lock --tmpfs /tmp"
+          shift 1
+      ;;
       --[hH][eE][lL][pP]|-[hH])
           Usage
           exit
@@ -61,17 +67,24 @@ if [ `whoami` != "root" ]; then
 	SUDO="sudo"
 fi
 
-for _dev in /dev/fuse /dev/video$NUM_1 /dev/dri/card0 /dev/dri/renderD128
+for _dev in /dev/fuse /dev/video0 /dev/video1 /dev/dri/card0 /dev/dri/renderD128
 do
    if [ -c $_dev ]; then
-	   _DOCKDEV="$_dev"
-	   case $_dev in
-		   /dev/video*) _DOCKDEV=/dev/video0
-			   ;;
-	   esac
-      DEV="$DEV --device=$_dev:$_DOCKDEV"
+      DEV="$DEV --device=$_dev:$_dev"
    fi
 done
+#for _dev in /dev/fuse /dev/video$NUM_1 /dev/dri/card0 /dev/dri/renderD128
+#do
+#   if [ -c $_dev ]; then
+#	   _DOCKDEV="$_dev"
+#	   case $_dev in
+#		   /dev/video*) _DOCKDEV=/dev/video0
+#			   ;;
+#	   esac
+#      DEV="$DEV --device=$_dev:$_DOCKDEV"
+#   fi
+#done
+
 $DRYRUN $SUDO docker run -d \
         --restart=unless-stopped \
 	-p 3389$NUM:3389 \
@@ -80,6 +93,7 @@ $DRYRUN $SUDO docker run -d \
 	--cap-add=SYS_ADMIN \
 	--security-opt=apparmor:unconfined \
 	$_SECCOMP \
+        $_TMPFS \
         $DEV \
         $SHM \
         $PRIVILEGED \
@@ -88,4 +102,3 @@ $DRYRUN $SUDO docker run -d \
 	--name=$NAME \
 	--hostname=$NAME \
 	$IMGNAME 
-
