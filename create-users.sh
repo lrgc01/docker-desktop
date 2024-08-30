@@ -60,7 +60,7 @@ USERS=${_USERS:-""}
    
 if [ -z "$_GROUPLIST" ];then
    #_GROUPLIST="sudo,video,xrdp,lightdm"
-   _GROUPLIST="sudo,video,xrdp"
+   _GROUPLIST="sudo,video,audio,xrdp"
 fi
 if [ `whoami` != "root" ]; then
    SUDO="sudo"
