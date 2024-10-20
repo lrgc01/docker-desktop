@@ -46,7 +46,8 @@ do
       ;;
       --[tT][mM][pP][fF][sS]) 
           #_TMPFS="--tmpfs /run --tmpfs /run/lock --tmpfs /tmp --tmpfs /run/s6:rw,exec"
-          _TMPFS="--tmpfs /run/lock --tmpfs /tmp"
+          #_TMPFS="--tmpfs /run/lock --tmpfs /tmp"
+          _TMPFS="--tmpfs /run:rw,exec --tmpfs /run/lock --tmpfs /tmp"
           shift 1
       ;;
       --[hH][eE][lL][pP]|-[hH])
