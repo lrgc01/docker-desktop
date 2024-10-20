@@ -5,6 +5,7 @@ Usage() {
         echo "   -i imgname"
         echo "   -s containerSequence"
         echo "   -n containerName"
+        echo "   -v vol1:dockvol1 ... -v vol2:dockvol2"
         echo "   --priv (run in privileged mode)"
         echo "   --shm (use ipc=host)"
         echo "   --seccomp (use --security-opt seccomp=unconfined)"
@@ -13,6 +14,7 @@ Usage() {
 }
 
 #sudo docker run -d -p 3389:3389 -p 177:177/udp -v /home:/home --name=teste2 lrgc01/desktop:arm64 /lib/systemd/systemd --system --deserialize 35
+VOLUMES=""
 
 while [ $# -gt 0 ]
 do
@@ -25,6 +27,10 @@ do
       ;;
       --[nN][aA][mM][eE]|-[nN]) 
           NAME="$2"
+          shift 2
+      ;;
+      --[vV][oO][lL][uU][mM][eE]|-[vV]) 
+          VOLUMES="$VOLUMES -v $2"
           shift 2
       ;;
       --[pP][rR][iI][vV]) 
@@ -68,7 +74,7 @@ if [ `whoami` != "root" ]; then
 	SUDO="sudo"
 fi
 
-for _dev in /dev/fuse /dev/video0 /dev/video1 /dev/dri/card0 /dev/dri/renderD128
+for _dev in /dev/fuse /dev/video0 /dev/video1 /dev/dri/card0 /dev/dri/renderD128 /dev/snd $(find /dev/snd -type c)
 do
    if [ -c $_dev ]; then
       DEV="$DEV --device=$_dev:$_dev"
@@ -99,6 +105,7 @@ $DRYRUN $SUDO docker run -d \
         $SHM \
         $PRIVILEGED \
 	-v /home:/home \
+	$VOLUMES \
 	--entrypoint="/init" \
 	--name=$NAME \
 	--hostname=$NAME \
