@@ -6,10 +6,11 @@ Usage() {
         echo "   -s containerSequence"
         echo "   -n containerName"
         echo "   -v vol1:dockvol1 ... -v vol2:dockvol2"
+        echo "   -e VAR=... -e VAR2=..."
         echo "   --priv (run in privileged mode)"
         echo "   --shm (use ipc=host)"
         echo "   --seccomp (use --security-opt seccomp=unconfined)"
-	echo "   --tmp (use tmpfs standard mounts inside container)"
+	echo "   --tmpfs (use tmpfs standard mounts inside container)"
         echo "   -d (dryrun) -h (this help)"
 }
 
@@ -31,6 +32,10 @@ do
       ;;
       --[vV][oO][lL][uU][mM][eE]|-[vV]) 
           VOLUMES="$VOLUMES -v $2"
+          shift 2
+      ;;
+      --[eE][nN][vV]|-[eE]) 
+          ENV="$ENV -e $2"
           shift 2
       ;;
       --[pP][rR][iI][vV]) 
@@ -104,8 +109,8 @@ $DRYRUN $SUDO docker run -d \
         $DEV \
         $SHM \
         $PRIVILEGED \
-	-v /home:/home \
 	$VOLUMES \
+        $ENV \
 	--entrypoint="/init" \
 	--name=$NAME \
 	--hostname=$NAME \

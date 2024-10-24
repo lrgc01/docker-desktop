@@ -2,13 +2,13 @@
 
 Usage() {
         echo "Usage: $0"
-	echo "	-n container_name (mandatory)"
-	echo "	-u u1,u2,u3,... (comma separated list)"
-	echo "	-g g1,g2,g3,... (comma separated list)"
-	echo "	-s <shell_path> (user shell for all in list)"
-        echo "  -e <environment file name>"
-        echo "	-d (dryrun)"
-        echo "	-h (this help)"
+	echo "    -n container_name (mandatory)"
+	echo "    -u u1,u2,u3,... (comma separated list)"
+	echo "    -g g1,g2,g3,... (comma separated list)"
+	echo "    -s <shell_path> (user shell for all in list)"
+        echo "    -e <environment file name>"
+        echo "    -d (dryrun)"
+        echo "    -h (this help)"
 }
 
 _SHELL=/bin/bash
@@ -80,5 +80,6 @@ else
          ID=""
       fi
       $DRYRUN $SUDO docker exec -i $_CONTNAME useradd $ID -G $_GROUPLIST -s $_SHELL -d /home/$u -m $u
+      $DRYRUN $SUDO docker exec -i $_CONTNAME bash -c "echo $u:123456 | chpasswd"
    done
 fi
