@@ -72,7 +72,7 @@ done
 
 NUM=${NUM:-"1"}
 NAME=${NAME:-"DeskDock$NUM"}
-IMGNAME=${IMGNAME:-"lrgc01/desktop:latest" }
+IMGNAME=${IMGNAME:-"lrgc01/debian-desktop:latest" }
 NUM_1=$(expr $NUM - 1)
 
 if [ `whoami` != "root" ]; then
