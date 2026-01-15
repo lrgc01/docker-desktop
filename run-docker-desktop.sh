@@ -55,6 +55,38 @@ do
           _MINUSD="-d"
           shift 1
       ;;
+      --network)
+           _NETWORK="--network=$2"
+	   shift 2
+      ;;
+      --network=*)
+           _NETWORK="$1"
+	   shift 1
+      ;;
+      --ip)
+           _IP="--ip=$2"
+	   shift 2
+      ;;
+      --ip=*)
+           _IP="$1"
+	   shift 1
+      ;;
+      --ip6)
+           _IP6="--ip6=$2"
+	   shift 2
+      ;;
+      --ip6=*)
+           _IP6="$1"
+	   shift 1
+      ;;
+      --sysctl)
+           _SYSCTL="$_SYSCTL --sysctl=$2"
+	   shift 2
+      ;;
+      --sysctl=*)
+           _SYSCTL="$_SYSCTL $1"
+	   shift 1
+      ;;
       --[tT][mM][pP][fF][sS]) 
           #_TMPFS="--tmpfs /run --tmpfs /run/lock --tmpfs /tmp --tmpfs /run/s6:rw,exec"
           #_TMPFS="--tmpfs /run/lock --tmpfs /tmp"
@@ -99,6 +131,7 @@ done
 
 $DRYRUN $SUDO docker run -d \
         --restart=unless-stopped \
+	$_NETWORK $_IP $_IP6 $_SYSCTL \
 	-p 3389$NUM:3389 \
 	-p 177$NUM:177/udp \
 	-p 2222$NUM:22 \
