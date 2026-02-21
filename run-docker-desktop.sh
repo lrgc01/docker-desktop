@@ -15,6 +15,8 @@ Usage() {
         echo "   --shm (use ipc=host)"
         echo "   --seccomp (use --security-opt seccomp=unconfined)"
 	echo "   --tmpfs (use tmpfs standard mounts inside container)"
+	echo "   --netadm (use cap NET_ADMIN and devices)"
+	echo "   --adm (use cap SYS_ADMIN and SYS_RESOURCE)"
         echo "   -d (dryrun) -h (this help)"
 }
 
@@ -91,6 +93,14 @@ do
            _SYSCTL="$_SYSCTL $1"
 	   shift 1
       ;;
+      --netadm)
+           _NETADM="--cap-add=NET_ADMIN --cap-add=NET_RAW --device /dev/net/tun --device /dev/ppp"
+           shift 1
+      ;;
+      --adm)
+           _ADMIN="--cap-add=SYS_ADMIN --cap-add=SYS_RESOURCE"
+           shift 1
+      ;;
       --[tT][mM][pP][fF][sS]) 
           #_TMPFS="--tmpfs /run --tmpfs /run/lock --tmpfs /tmp --tmpfs /run/s6:rw,exec"
           #_TMPFS="--tmpfs /run/lock --tmpfs /tmp"
@@ -141,6 +151,7 @@ $DRYRUN $SUDO docker run -d \
 	-p 2222$NUM:22 \
 	--cap-add=SYS_ADMIN \
 	--security-opt=apparmor:unconfined \
+        $_NETADM $_ADMIN \
 	$_SECCOMP \
         $_TMPFS \
         $DEV \
