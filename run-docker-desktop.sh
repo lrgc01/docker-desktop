@@ -159,6 +159,7 @@ $DRYRUN $SUDO docker run -d \
         $PRIVILEGED \
 	$VOLUMES \
         $ENV \
+        --ulimit nofile=8192:65536 \
 	--entrypoint="/init" \
 	--name=$NAME \
 	--hostname=$NAME \
